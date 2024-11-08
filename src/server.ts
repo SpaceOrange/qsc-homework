@@ -1,7 +1,9 @@
 import Fastify from "fastify";
+import { PrismaClient } from '@prisma/client';
 import { request } from "https";
 
 const fastify = Fastify();
+const prisma = new PrismaClient();
 
 fastify.listen({port: 3000}, (err, address) => {
     if (err){
@@ -11,6 +13,7 @@ fastify.listen({port: 3000}, (err, address) => {
     console.log(`Server listening at ${address}`);
 });
 
-fastify.get('/', (request, reply) => {
-    reply.send("hello world");
+fastify.get('/questions', async (request, reply) => {
+    const questions = await prisma.question.findMany();
+    reply.send(questions);
 })
